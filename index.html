@@ -2,7 +2,7 @@
 <html lang="zh‑CN">
 <head>
 <meta charset="UTF‑8">
-<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
     * {
         margin: 0;
@@ -59,6 +59,9 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
     }
 
     .card-title::before {
@@ -299,19 +302,33 @@
 // 请将下面的 URL 替换为你在 Cloudflare 部署的 Worker URL
 const API_BASE = "https://chadan.lanxiaoe.dpdns.org";
 let clickCount = 0;
-let timer;
+let lastClickTime = 0;
+const TRIPLE_CLICK_DELAY = 500; // 三击时间间隔
 
-// 双击标题三次触发显示管理员面板
-document.getElementById("triggerTitle").addEventListener("click",()=>{
-    clickCount++;
-    clearTimeout(timer);
-    timer = setTimeout(()=>{
-        if(clickCount >=3){
-            document.getElementById("loginWrap").style.display = "block";
-        }
+// 三击标题触发显示管理员面板
+document.getElementById("triggerTitle").addEventListener("click", (e) => {
+    e.preventDefault();
+    const now = Date.now();
+    
+    if (now - lastClickTime < TRIPLE_CLICK_DELAY) {
+        clickCount++;
+    } else {
+        clickCount = 1;
+    }
+    
+    lastClickTime = now;
+    
+    if (clickCount >= 3) {
+        document.getElementById("loginWrap").style.display = "block";
         clickCount = 0;
-    },700);
+        lastClickTime = 0;
+    }
 });
+
+// 阻止标题区域的默认触摸行为
+document.getElementById("triggerTitle").addEventListener("touchstart", (e) => {
+    e.preventDefault();
+}, { passive: false });
 
 async function loginAdmin(){
     const pwd = document.getElementById("adminPwd").value;
