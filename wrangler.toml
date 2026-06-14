@@ -1,0 +1,13 @@
+name = "express-tracking-worker"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# 配置 D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "express_db"
+database_id = "<你的 D1 数据库 ID>"
+
+# 配置管理员密码环境变量
+[vars]
+ADMIN_PASSWORD = "<设置你的管理员密码>"

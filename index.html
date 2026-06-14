@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh‑CN">
+<head>
+<meta charset="UTF‑8">
+<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem;
+        animation: gradientShift 8s ease infinite;
+        background-size: 200% 200%;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .container {
+        max-width: 520px;
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 1.75rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1.25rem;
+        position: relative;
+        padding-left: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 1.25rem;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        border-radius: 2px;
+    }
+
+    .card-title::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    label {
+        display: block;
+        font-size: 0.875rem;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    input, textarea {
+        width: 100%;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        transform: translateY(-1px);
+    }
+
+    textarea {
+        min-height: 140px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .hint-text {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .hint-text::before {
+        content: 'ℹ';
+        font-size: 0.7rem;
+        background: #e0e7ff;
+        color: #6366f1;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    button {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    button:hover::before {
+        left: 100%;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+    }
+
+    button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    #loginWrap, #adminArea {
+        display: none;
+    }
+
+    #result {
+        margin-top: 1.25rem;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+        border-radius: 12px;
+        line-height: 1.8;
+        color: #1e293b;
+        border-left: 4px solid #2563eb;
+        animation: fadeIn 0.3s ease;
+        white-space: pre-wrap;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+        margin: 1.75rem 0;
+    }
+
+    .feature-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+        color: #1d4ed8;
+        padding: 0.3rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+
+    .feature-badge::before {
+        content: '✓';
+        font-size: 0.65rem;
+        background: #2563eb;
+        color: white;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="card" id="loginWrap" style="display: none;">
+        <div class="card-title">🔐 管理员登录验证</div>
+        <div class="form-group">
+            <label>管理员密码</label>
+            <input type="password" id="adminPwd" placeholder="请输入管理员密码">
+        </div>
+        <button onclick="loginAdmin()">验证身份</button>
+    </div>
+
+    <div class="card" id="adminArea" style="display: none;">
+        <div class="card-title">📦 单条快递信息录入</div>
+        <div class="form-group">
+            <label>登记日期</label>
+            <input type="date" id="recordDate">
+        </div>
+        <div class="form-group">
+            <label>手机号码</label>
+            <input type="text" id="phone" placeholder="请输入11位手机号码">
+        </div>
+        <div class="form-group">
+            <label>快递单号</label>
+            <input type="text" id="expressNo" placeholder="请输入运单号">
+        </div>
+        <div class="form-group">
+            <label>快递公司</label>
+            <input type="text" id="company" placeholder="如：顺丰、申通、圆通等">
+        </div>
+        <button onclick="submitData()">保存单条数据</button>
+
+        <div class="divider"></div>
+
+        <div class="card-title">📥 批量导入快递信息</div>
+        <p class="hint-text">格式示例：顺丰----13800138000----SF12345678，每行一条，共用上方登记日期</p>
+        <div class="form-group">
+            <textarea id="batchText" placeholder="顺丰----13800138000----SF12345678&#10;申通----13900139000----ST98765432"></textarea>
+        </div>
+        <button onclick="batchUpload()">批量提交</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title" id="triggerTitle">🔍 快递信息查询</div>
+        <div class="feature-badge">开放使用</div>
+        <div class="form-group">
+            <input type="text" id="searchPhone" placeholder="请输入手机号查询快递信息">
+        </div>
+        <button onclick="searchByPhone()">查询快递</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="card" style="text-align: center; padding: 1rem 1.75rem;">
+        <p style="font-size: 0.85rem; color: #94a3b8;">© 2026 快递查询系统 | 安全加密传输</p>
+    </div>
+</div>
+
+<script>
+// 请将下面的 URL 替换为你在 Cloudflare 部署的 Worker URL
+const API_BASE = "https://chadan.lanxiaoe.dpdns.org";
+let clickCount = 0;
+let timer;
+
+// 双击标题三次触发显示管理员面板
+document.getElementById("triggerTitle").addEventListener("click",()=>{
+    clickCount++;
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+        if(clickCount >=3){
+            document.getElementById("loginWrap").style.display = "block";
+        }
+        clickCount = 0;
+    },700);
+});
+
+async function loginAdmin(){
+    const pwd = document.getElementById("adminPwd").value;
+    const res = await fetch(`${API_BASE}/verifyPwd`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({password:pwd})
+    });
+    const ret = await res.json();
+    if(ret.success){
+        document.getElementById("adminArea").style.display = "flex";
+        document.getElementById("adminArea").style.flexDirection = "column";
+        alert("验证成功，可录入快递数据");
+    }else{
+        alert("密码错误");
+    }
+}
+
+async function submitData(){
+    const recordDate = document.getElementById("recordDate").value;
+    const phone = document.getElementById("phone").value.trim();
+    const expressNo = document.getElementById("expressNo").value.trim();
+    const company = document.getElementById("company").value.trim();
+    const adminPwd = document.getElementById("adminPwd").value;
+
+    if(!recordDate){
+        alert("请选择登记日期");
+        return;
+    }
+    if(!phone){
+        alert("请填写手机号");
+        return;
+    }
+
+    const res = await fetch(`${API_BASE}/add`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({recordDate, phone, expressNo, company, adminPwd})
+    });
+    const data = await res.json();
+    alert(data.ok ? "数据保存成功" : "权限不足");
+}
+
+async function batchUpload(){
+    const recordDate = document.getElementById("recordDate").value;
+    const raw = document.getElementById("batchText").value.trim();
+    const adminPwd = document.getElementById("adminPwd").value;
+    if(!recordDate){
+        alert("请先选定登记日期");
+        return;
+    }
+    if(!raw){
+        alert("批量内容不能为空");
+        return;
+    }
+    const lines = raw.split("\n");
+    const list = [];
+    for(let line of lines){
+        const arr = line.split("----");
+        if(arr.length===3){
+            list.push({
+                company:arr[0].trim(),
+                phone:arr[1].trim(),
+                expressNo:arr[2].trim(),
+                recordDate
+            });
+        }
+    }
+    if(list.length===0){
+        alert("格式不对，请严格使用 快递公司----手机号----运单号");
+        return;
+    }
+
+    const res = await fetch(`${API_BASE}/batch`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({data:list,adminPwd})
+    });
+    const ret = await res.json();
+    alert(ret.ok ? `成功导入${list.length}条` : "权限不足");
+}
+
+async function searchByPhone(){
+    const phone = document.getElementById("searchPhone").value.trim();
+    if(!phone){
+        alert("请输入手机号");
+        return;
+    }
+    const res = await fetch(`${API_BASE}/search?phone=${phone}`);
+    const info = await res.json();
+    const resultBox = document.getElementById("result");
+
+    if(info.empty){
+        resultBox.innerText = "未查询到此手机号的快递记录";
+    }else{
+        resultBox.innerText = `登记日期：${info.recordDate}\n快递公司：${info.company}\n快递单号：${info.expressNo}`;
+    }
+}
+</script>
+</body>
+</html>
