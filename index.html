@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh‑CN">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF‑8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
     * {
@@ -307,7 +307,6 @@ const TRIPLE_CLICK_DELAY = 500; // 三击时间间隔
 
 // 三击标题触发显示管理员面板
 document.getElementById("triggerTitle").addEventListener("click", (e) => {
-    e.preventDefault();
     const now = Date.now();
     
     if (now - lastClickTime < TRIPLE_CLICK_DELAY) {
@@ -324,11 +323,6 @@ document.getElementById("triggerTitle").addEventListener("click", (e) => {
         lastClickTime = 0;
     }
 });
-
-// 阻止标题区域的默认触摸行为
-document.getElementById("triggerTitle").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-}, { passive: false });
 
 async function loginAdmin(){
     const pwd = document.getElementById("adminPwd").value;
